@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANIMAGENT - Retro Animation Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(45deg, #000000, #1a0033, #330066, #000000);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease-in-out infinite;
+            font-family: 'Courier New', monospace;
+            color: #00ff00;
+            overflow: hidden;
+            height: 100vh;
+            cursor: crosshair;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+        
+        .title {
+            font-size: 4rem;
+            font-weight: bold;
+            text-shadow: 
+                0 0 10px #00ff00,
+                0 0 20px #00ff00,
+                0 0 30px #00ff00,
+                0 0 40px #00ff00;
+            animation: glow 2s ease-in-out infinite alternate, float 3s ease-in-out infinite;
+            margin-bottom: 2rem;
+            z-index: 10;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00; }
+            to { text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00, 0 0 40px #00ff00, 0 0 50px #00ff00; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotateX(0deg); }
+            50% { transform: translateY(-10px) rotateX(5deg); }
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: #ff00ff;
+            text-shadow: 0 0 10px #ff00ff;
+            animation: pulse 1.5s ease-in-out infinite;
+            margin-bottom: 3rem;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+        
+        .matrix-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: 1.2rem;
+            color: #00ff00;
+            opacity: 0.1;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .matrix-column {
+            position: absolute;
+            top: -100%;
+            animation: matrixFall linear infinite;
+        }
+        
+        @keyframes matrixFall {
+            to { top: 100%; }
+        }
+        
+        .neon-border {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border: 2px solid #00ff00;
+            box-shadow: 
+                0 0 10px #00ff00,
+                inset 0 0 10px #00ff00;
+            animation: borderGlow 3s ease-in-out infinite;
+            z-index: 5;
+        }
+        
+        @keyframes borderGlow {
+            0%, 100% { box-shadow: 0 0 10px #00ff00, inset 0 0 10px #00ff00; }
+            50% { box-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00, inset 0 0 20px #00ff00; }
+        }
+        
+        .menu {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+            z-index: 10;
+        }
+        
+        .menu-item {
+            padding: 1rem 2rem;
+            border: 2px solid #ff00ff;
+            background: rgba(255, 0, 255, 0.1);
+            color: #ff00ff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .menu-item:hover {
+            background: rgba(255, 0, 255, 0.3);
+            box-shadow: 0 0 20px #ff00ff;
+            transform: scale(1.1);
+        }
+        
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .menu-item:hover::before {
+            left: 100%;
+        }
+        
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+        
+        .floating-element {
+            position: absolute;
+            font-size: 2rem;
+            animation: floatAround 10s linear infinite;
+            opacity: 0.3;
+        }
+        
+        @keyframes floatAround {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(100px, -50px) rotate(90deg); }
+            50% { transform: translate(0, -100px) rotate(180deg); }
+            75% { transform: translate(-100px, -50px) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+        
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff00, transparent);
+            animation: scan 2s linear infinite;
+            z-index: 8;
+        }
+        
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        
+        .corner-decoration {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border: 2px solid #00ff00;
+            z-index: 6;
+        }
+        
+        .corner-decoration.top-left {
+            top: 20px;
+            left: 20px;
+            border-right: none;
+            border-bottom: none;
+        }
+        
+        .corner-decoration.top-right {
+            top: 20px;
+            right: 20px;
+            border-left: none;
+            border-bottom: none;
+        }
+        
+        .corner-decoration.bottom-left {
+            bottom: 20px;
+            left: 20px;
+            border-right: none;
+            border-top: none;
+        }
+        
+        .corner-decoration.bottom-right {
+            bottom: 20px;
+            right: 20px;
+            border-left: none;
+            border-top: none;
+        }
+        
+        .glitch-text {
+            position: relative;
+            animation: glitch 0.3s infinite;
+        }
+        
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+        
+        .cursor {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #00ff00;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            animation: cursorPulse 1s ease-in-out infinite;
+        }
+        
+        @keyframes cursorPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+        }
+        
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            backdrop-filter: blur(5px);
+        }
+        
+        .overlay.active {
+            display: flex;
+            animation: overlayFadeIn 0.5s ease-out;
+        }
+        
+        @keyframes overlayFadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .overlay-content {
+            background: linear-gradient(45deg, #000000, #1a0033);
+            border: 2px solid #00ff00;
+            padding: 2rem;
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 0 30px #00ff00;
+            animation: contentSlideIn 0.6s ease-out;
+        }
+        
+        @keyframes contentSlideIn {
+            from { transform: translateY(-50px) rotateX(-10deg); opacity: 0; }
+            to { transform: translateY(0) rotateX(0deg); opacity: 1; }
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: 2px solid #ff00ff;
+            color: #ff00ff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            background: #ff00ff;
+            color: #000;
+            box-shadow: 0 0 15px #ff00ff;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .gallery-item {
+            border: 2px solid #00ffff;
+            padding: 1rem;
+            text-align: center;
+            background: rgba(0, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .gallery-item:hover {
+            background: rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 20px #00ffff;
+            transform: scale(1.05);
+        }
+        
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .contact-form input,
+        .contact-form textarea {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 0.5rem;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            outline: none;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(45deg, #00ff00, #00ffff);
+            border: none;
+            color: #000;
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #00ff00;
+        }
+        
+        .about-content {
+            line-height: 1.6;
+        }
+        
+        .about-content h3 {
+            color: #ff00ff;
+            margin-bottom: 1rem;
+        }
+        
+        .enter-animation {
+            text-align: center;
+            font-size: 2rem;
+            color: #ffff00;
+            text-shadow: 0 0 10px #ffff00;
+        }
+        
+        .loading-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 0, 0.3);
+            margin: 1rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #ffff00, #ff00ff);
+            width: 0%;
+            animation: loading 3s ease-in-out infinite;
+        }
+        
+        @keyframes loading {
+            0% { width: 0%; }
+            50% { width: 100%; }
+            100% { width: 0%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor" id="cursor"></div>
+    
+    <div class="container">
+        <div class="neon-border"></div>
+        
+        <div class="corner-decoration top-left"></div>
+        <div class="corner-decoration top-right"></div>
+        <div class="corner-decoration bottom-left"></div>
+        <div class="corner-decoration bottom-right"></div>
+        
+        <div class="scan-line"></div>
+        
+        <div class="matrix-bg" id="matrixBg"></div>
+        
+        <div class="floating-elements" id="floatingElements"></div>
+        
+        <h1 class="title glitch-text">ANIMAGENT</h1>
+        <p class="subtitle">RETRO ANIMATION PORTAL</p>
+        
+        <div class="menu">
+            <a href="#" class="menu-item" data-section="enter">Enter</a>
+            <a href="#" class="menu-item" data-section="gallery">Gallery</a>
+            <a href="#" class="menu-item" data-section="about">About</a>
+            <a href="#" class="menu-item" data-section="contact">Contact</a>
+        </div>
+        
+        <!-- Overlays for each section -->
+        <div class="overlay" id="enter-overlay">
+            <div class="overlay-content">
+                <button class="close-btn" onclick="closeOverlay('enter-overlay')">×</button>
+                <div class="enter-animation">
+                    <h2>ENTERING THE MATRIX...</h2>
+                    <div class="loading-bar">
+                        <div class="loading-progress"></div>
+                    </div>
+                    <p>INITIALIZING NEURAL INTERFACE...</p>
+                    <p>CONNECTING TO ANIMAGENT NETWORK...</p>
+                    <p>ACCESS GRANTED</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="overlay" id="gallery-overlay">
+            <div class="overlay-content">
+                <button class="close-btn" onclick="closeOverlay('gallery-overlay')">×</button>
+                <h2>ANIMAGENT GALLERY</h2>
+                <div class="gallery-grid">
+                    <div class="gallery-item">
+                        <h3>CYBER CITY</h3>
+                        <p>Neon-lit metropolis</p>
+                    </div>
+                    <div class="gallery-item">
+                        <h3>DIGITAL DREAMS</h3>
+                        <p>Abstract animations</p>
+                    </div>
+                    <div class="gallery-item">
+                        <h3>RETRO WAVES</h3>
+                        <p>80s synthwave vibes</p>
+                    </div>
+                    <div class="gallery-item">
+                        <h3>MATRIX CODE</h3>
+                        <p>Binary rain effects</p>
+                    </div>
+                    <div class="gallery-item">
+                        <h3>NEON GLOW</h3>
+                        <p>Luminous effects</p>
+                    </div>
+                    <div class="gallery-item">
+                        <h3>CYBER PUNK</h3>
+                        <p>Future dystopia</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="overlay" id="about-overlay">
+            <div class="overlay-content">
+                <button class="close-btn" onclick="closeOverlay('about-overlay')">×</button>
+                <h2>ABOUT ANIMAGENT</h2>
+                <div class="about-content">
+                    <h3>WELCOME TO THE DIGITAL REALM</h3>
+                    <p>ANIMAGENT is a retro-futuristic animation portal that bridges the gap between the analog past and the digital future. Born from the early 2000s web aesthetic, we create immersive experiences that transport you to a world where neon lights never fade and digital dreams come alive.</p>
+                    
+                    <h3>OUR MISSION</h3>
+                    <p>To preserve the nostalgic charm of early internet culture while pushing the boundaries of modern web animation. Every pixel, every glow, every animation is crafted with care to create that perfect retro-futuristic vibe.</p>
+                    
+                    <h3>TECHNOLOGY</h3>
+                    <p>Built with cutting-edge CSS animations, JavaScript effects, and a deep appreciation for the cyberpunk aesthetic. We combine the best of old-school web design with modern interactive elements.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="overlay" id="contact-overlay">
+            <div class="overlay-content">
+                <button class="close-btn" onclick="closeOverlay('contact-overlay')">×</button>
+                <h2>CONTACT ANIMAGENT</h2>
+                <form class="contact-form">
+                    <input type="text" placeholder="YOUR NAME" required>
+                    <input type="email" placeholder="YOUR EMAIL" required>
+                    <textarea placeholder="YOUR MESSAGE" rows="5" required></textarea>
+                    <button type="submit" class="submit-btn">SEND MESSAGE</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Matrix rain effect
+        function createMatrixRain() {
+            const matrixBg = document.getElementById('matrixBg');
+            const columns = Math.floor(window.innerWidth / 20);
+            
+            for (let i = 0; i < columns; i++) {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = i * 20 + 'px';
+                column.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                column.style.animationDelay = Math.random() * 2 + 's';
+                
+                const characters = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+                let text = '';
+                for (let j = 0; j < 20; j++) {
+                    text += characters[Math.floor(Math.random() * characters.length)] + '<br>';
+                }
+                column.innerHTML = text;
+                
+                matrixBg.appendChild(column);
+            }
+        }
+        
+        // Floating elements
+        function createFloatingElements() {
+            const container = document.getElementById('floatingElements');
+            const symbols = ['★', '♦', '♠', '♥', '♣', '●', '◆', '■', '▲', '▼'];
+            
+            for (let i = 0; i < 15; i++) {
+                const element = document.createElement('div');
+                element.className = 'floating-element';
+                element.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                element.style.left = Math.random() * 100 + '%';
+                element.style.top = Math.random() * 100 + '%';
+                element.style.animationDelay = Math.random() * 5 + 's';
+                element.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                element.style.color = ['#00ff00', '#ff00ff', '#00ffff', '#ffff00'][Math.floor(Math.random() * 4)];
+                
+                container.appendChild(element);
+            }
+        }
+        
+        // Custom cursor
+        function initCustomCursor() {
+            const cursor = document.getElementById('cursor');
+            
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX - 10 + 'px';
+                cursor.style.top = e.clientY - 10 + 'px';
+            });
+            
+            document.addEventListener('click', () => {
+                cursor.style.transform = 'scale(0.5)';
+                setTimeout(() => {
+                    cursor.style.transform = 'scale(1)';
+                }, 100);
+            });
+        }
+        
+        // Glitch effect for title
+        function addGlitchEffect() {
+            const title = document.querySelector('.title');
+            
+            setInterval(() => {
+                if (Math.random() < 0.1) {
+                    title.style.animation = 'glitch 0.1s infinite';
+                    setTimeout(() => {
+                        title.style.animation = 'glow 2s ease-in-out infinite alternate, float 3s ease-in-out infinite';
+                    }, 200);
+                }
+            }, 1000);
+        }
+        
+        // Initialize everything
+        window.addEventListener('load', () => {
+            createMatrixRain();
+            createFloatingElements();
+            initCustomCursor();
+            addGlitchEffect();
+        });
+        
+        // Add some interactive effects
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ') {
+                document.body.style.animation = 'gradientShift 1s ease-in-out';
+                setTimeout(() => {
+                    document.body.style.animation = 'gradientShift 8s ease-in-out infinite';
+                }, 1000);
+            }
+        });
+        
+        // Menu item click effects
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                item.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    item.style.transform = 'scale(1)';
+                }, 100);
+                
+                // Open corresponding overlay
+                const section = item.getAttribute('data-section');
+                openOverlay(section + '-overlay');
+            });
+        });
+        
+        // Overlay functions
+        function openOverlay(overlayId) {
+            const overlay = document.getElementById(overlayId);
+            overlay.classList.add('active');
+            
+            // Add special effects based on overlay type
+            if (overlayId === 'enter-overlay') {
+                // Matrix-style typing effect for enter
+                const enterText = overlay.querySelector('.enter-animation');
+                enterText.style.animation = 'glitch 0.1s infinite';
+                setTimeout(() => {
+                    enterText.style.animation = '';
+                }, 2000);
+            } else if (overlayId === 'gallery-overlay') {
+                // Stagger animation for gallery items
+                const galleryItems = overlay.querySelectorAll('.gallery-item');
+                galleryItems.forEach((item, index) => {
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        item.style.transition = 'all 0.5s ease';
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+            }
+        }
+        
+        function closeOverlay(overlayId) {
+            const overlay = document.getElementById(overlayId);
+            overlay.classList.remove('active');
+        }
+        
+        // Close overlay when clicking outside content
+        document.querySelectorAll('.overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+        
+        // Contact form submission
+        document.querySelector('.contact-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('.submit-btn');
+            submitBtn.textContent = 'MESSAGE SENT!';
+            submitBtn.style.background = 'linear-gradient(45deg, #00ff00, #00ff00)';
+            setTimeout(() => {
+                submitBtn.textContent = 'SEND MESSAGE';
+                submitBtn.style.background = 'linear-gradient(45deg, #00ff00, #00ffff)';
+                closeOverlay('contact-overlay');
+            }, 2000);
+        });
+    </script>
+</body>
+</html> 
